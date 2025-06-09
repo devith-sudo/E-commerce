@@ -11,3 +11,29 @@
 - ProductService (list, search, add)
 - OrderService (create order)
 - MainApp (console UI)
+
+ecommerce-console/
+├── controller/
+│   └── UserController.java
+│   └── ProductController.java
+│   └── OrderController.java
+├── model/
+│   └── User.java
+│   └── Product.java
+│   └── Order.java
+│   └── OrderItem.java
+│   └── Category.java
+│   └── DAO/
+│       └── UserDAO.java
+│       └── ProductDAO.java
+│       └── OrderDAO.java
+│       └── CategoryDAO.java
+├── view/
+│   └── MainMenu.java
+│   └── UserView.java
+│   └── ProductView.java
+├── util/
+│   └── DBConnection.java
+│   └── HashUtil.java
+├── App.java
+└── schema.sql
