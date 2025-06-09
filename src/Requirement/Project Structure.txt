@@ -1,0 +1,13 @@
+### Classes (Java)
+
+- User
+- Category
+- Product
+- Order
+- OrderItem
+- Cart (in-memory, per session)
+- DatabaseManager (JDBC connection handling)
+- UserService (register/login)
+- ProductService (list, search, add)
+- OrderService (create order)
+- MainApp (console UI)

@@ -1,0 +1,32 @@
+### 2. System Design
+
+---
+
+### Entities (Database tables)
+
+- Users
+    - user_id (UUID)
+    - username (unique)
+    - password_hash
+    - created_at
+- Categories
+    - category_id (UUID)
+    - category_name
+- Products
+    - product_id (UUID)
+    - name
+    - category_id (FK)
+    - price
+    - created_at
+- Orders
+    - order_id (UUID)
+    - user_id (FK)
+    - order_code (unique string)
+    - order_date
+    - total_price
+- Order_Items
+    - order_item_id (UUID)
+    - order_id (FK)
+    - product_id (FK)
+    - quantity
+    - price_per_item
