@@ -2,6 +2,9 @@ package view;
 
 // Product listing and search
 
+import dto.ProductDTO;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class ProductView {

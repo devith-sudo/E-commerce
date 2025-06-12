@@ -2,6 +2,9 @@ package view;
 
 // Login/Register UI
 
+import dto.LoginRequestDTO;
+import dto.RegisterRequestDTO;
+
 import java.util.Scanner;
 
 public class AuthView {

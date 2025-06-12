@@ -1,6 +1,9 @@
 package view;
 // View and manage cart
 
+import dto.CartItemDTO;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class CartView {

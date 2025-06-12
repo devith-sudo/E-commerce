@@ -2,6 +2,8 @@ package view;
 
 // View order summary
 
+import dto.OrderSummaryDTO;
+
 import java.text.SimpleDateFormat;
 
 public class OrderView {
