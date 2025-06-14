@@ -25,6 +25,7 @@ public class AuthService {
     public boolean login(String username, String password) {
         User user = userDAO.getUserByUsername(username);
         if (user == null) {
+            System.out.println("Username not found");
             return false;
         }
 
