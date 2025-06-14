@@ -1,4 +1,3 @@
-// OrderDAO.java
 package com.ecommerce.dao;
 
 import com.ecommerce.config.DatabaseConfig;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDAO {
+
     public Order createOrder(Order order) {
         String sql = "INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, ?)";
 
@@ -99,26 +99,10 @@ public class OrderDAO {
         return orders;
     }
 
-    private List<OrderProduct> getOrderProducts(Connection conn, int orderId) throws SQLException {
-        List<OrderProduct> orderProducts = new ArrayList<>();
-        String sql = "SELECT * FROM order_products WHERE order_id = ?";
-
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, orderId);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    OrderProduct orderProduct = new OrderProduct();
-                    orderProduct.setOrderId(rs.getInt("order_id"));
-                    orderProduct.setProductId(rs.getInt("product_id"));
-                    orderProduct.setQuantity(rs.getInt("quantity"));
-                    orderProduct.setPriceAtOrder(rs.getDouble("price_at_order"));
-                    orderProducts.add(orderProduct);
-                }
-            }
-        }
-        return orderProducts;
-    }
+    // Remove this duplicate method (already defined above)
+    // private List<OrderProduct> getOrderProducts(Connection conn, int orderId) throws SQLException {
+    //     ...
+    // }
 
     private Order mapRowToOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
@@ -130,6 +114,7 @@ public class OrderDAO {
         return order;
     }
 
+    // This is the correct method, you only need it once
     private List<OrderProduct> getOrderProducts(Connection conn, int orderId) throws SQLException {
         List<OrderProduct> orderProducts = new ArrayList<>();
         String sql = "SELECT * FROM order_products WHERE order_id = ?";

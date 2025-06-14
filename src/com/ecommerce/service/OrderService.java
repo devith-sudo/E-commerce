@@ -5,6 +5,7 @@ import com.ecommerce.dao.OrderDAO;
 import com.ecommerce.dao.ProductDAO;
 import com.ecommerce.model.Order;
 import com.ecommerce.model.Product;
+import com.ecommerce.model.OrderProduct;
 import java.util.List;
 
 public class OrderService {

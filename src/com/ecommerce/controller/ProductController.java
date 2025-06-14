@@ -65,7 +65,7 @@ public class ProductController {
         showProductMenu();
     }
 
-    private void viewProducts() {
+    public void viewProducts() {
         List<Product> products = productService.getAllProducts();
         List<Map<String, Object>> tableData = new ArrayList<>();
 

@@ -1,8 +1,7 @@
 <component name="libraryTable">
   <library name="lombok">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../../Program/Java/lombok.jar!/" />
-      <root url="jar://$PROJECT_DIR$/../../../../Program/Java/postgresql-42.7.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lombok.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
