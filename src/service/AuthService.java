@@ -1,5 +1,6 @@
 package service;
 
+import dao.UserDAO;
 import dto.LoginRequestDTO;
 import dto.RegisterRequestDTO;
 import model.User;
