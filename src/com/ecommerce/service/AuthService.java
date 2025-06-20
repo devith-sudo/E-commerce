@@ -15,15 +15,26 @@ public class AuthService {
         this.userDAO = userDAO;
     }
 
+    // Registers a new user with hashed + salted password
     public boolean register(User user) {
         if (userDAO.getUserByUsername(user.getUserName()) != null) {
-            return false;
+            return false; // Username already exists
         }
+
+        // Generate salt and hash the password
+        String salt = PasswordHasher.generateSalt();
+        String hashedPassword = PasswordHasher.hashPassword(user.getPassword(), salt);
+
+        // Store password in format: hashedPassword:salt
+        user.setPassword(hashedPassword + ":" + salt);
         user.setRole("CUSTOMER");
+
+        // Save user
         userDAO.createUser(user);
         return true;
     }
 
+    // Attempts login by verifying hashed password
     public boolean login(String username, String password) {
         User user = userDAO.getUserByUsername(username);
         if (user == null) {
@@ -31,8 +42,13 @@ public class AuthService {
             return false;
         }
 
-        // The Password is stored as "hashedPassword:salt"
+        // Stored password format: hashedPassword:salt
         String[] passwordParts = user.getPassword().split(":");
+        if (passwordParts.length != 2) {
+            System.out.println("Stored password format is invalid.");
+            return false;
+        }
+
         String storedHash = passwordParts[0];
         String salt = passwordParts[1];
 
@@ -40,6 +56,7 @@ public class AuthService {
             currentUser = user;
             return true;
         }
+
         return false;
     }
 
@@ -52,7 +69,8 @@ public class AuthService {
     }
 
     public boolean isStaff() {
-        return currentUser != null && ("STAFF".equals(currentUser.getRole()) || "ADMIN".equals(currentUser.getRole()));
+        return currentUser != null &&
+                ("STAFF".equals(currentUser.getRole()) || "ADMIN".equals(currentUser.getRole()));
     }
 
     public boolean isLoggedIn() {

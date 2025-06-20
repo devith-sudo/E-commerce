@@ -63,23 +63,23 @@ public class ConsoleUI {
             width = Math.max(width, option.length() + 4);
         }
 
-        System.out.println(BG_BLUE + WHITE + "╔" + "═".repeat(width) + "╗" + RESET);
-        System.out.println(BG_BLUE + WHITE + "║" + centerText(title, width) + "║" + RESET);
-        System.out.println(BG_BLUE + WHITE + "╠" + "═".repeat(width) + "╣" + RESET);
+        System.out.println(BG_BLUE + BLACK + "╔" + "═".repeat(width) + "╗" + RESET);
+        System.out.println(BG_BLUE + BLACK + "║" + centerText(title, width) + "║" + RESET);
+        System.out.println(BG_BLUE + BLACK + "╠" + "═".repeat(width) + "╣" + RESET);
 
         for (int i = 0; i < options.length; i++) {
             String line = " " + (i + 1) + ". " + options[i];
-            System.out.println(BG_BLUE + WHITE + "║" + String.format("%-" + width + "s", line) + "║" + RESET);
+            System.out.println(BG_BLUE + BLACK + "║" + String.format("%-" + width + "s", line) + "║" + RESET);
         }
 
-        System.out.println(BG_BLUE + WHITE + "╚" + "═".repeat(width) + "╝" + RESET);
+        System.out.println(BG_BLUE + BLACK + "╚" + "═".repeat(width) + "╝" + RESET);
     }
 
     public static void displayMessage(String message) {
         int width = message.length() + 4;
-        String border = BG_PURPLE + WHITE + "╔" + "═".repeat(width) + "╗" + RESET;
-        String textLine = BG_PURPLE + WHITE + "║  " + message + "  ║" + RESET;
-        String bottom = BG_PURPLE + WHITE + "╚" + "═".repeat(width) + "╝" + RESET;
+        String border = BG_GREEN + BLACK + "╔" + "═".repeat(width) + "╗" + RESET;
+        String textLine = BG_GREEN + BLACK + "║  " + message + "  ║" + RESET;
+        String bottom = BG_GREEN + BLACK + "╚" + "═".repeat(width) + "╝" + RESET;
 
         System.out.println(border);
         System.out.println(textLine);
