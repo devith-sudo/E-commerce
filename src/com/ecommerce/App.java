@@ -1,7 +1,6 @@
 // App.java
 package com.ecommerce;
 
-import com.ecommerce.config.DatabaseConfig;
 import com.ecommerce.controller.*;
 import com.ecommerce.dao.*;
 import com.ecommerce.service.*;

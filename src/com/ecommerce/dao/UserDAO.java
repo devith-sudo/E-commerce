@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class UserDAO {
     public User createUser(User user) {
-        String sql = "INSERT INTO users (user_name, email, password, role, u_uuid) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO ecommerce.users (user_name, email, password, role, u_uuid) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -47,7 +47,7 @@ public class UserDAO {
     }
 
     public User getUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE user_name = ? AND is_deleted = FALSE";
+        String sql = "SELECT * FROM ecommerce.users WHERE user_name = ? AND is_deleted = FALSE";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -67,7 +67,7 @@ public class UserDAO {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String sql = "SELECT * FROM users WHERE is_deleted = FALSE";
+        String sql = "SELECT * FROM ecommerce.users WHERE is_deleted = FALSE";
 
         try (Connection conn = DatabaseConfig.getConnection();
              Statement stmt = conn.createStatement();
@@ -83,7 +83,7 @@ public class UserDAO {
     }
 
     public boolean deleteUser(int userId) {
-        String sql = "UPDATE users SET is_deleted = TRUE WHERE id = ?";
+        String sql = "UPDATE ecommerce.users SET is_deleted = TRUE WHERE id = ?";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class UserDAO {
         user.setUserName(rs.getString("user_name"));
         user.setEmail(rs.getString("email"));
 
-        // Password is stored as "hashedPassword:salt"
+        // The Password is stored as "hashedPassword:salt"
         String[] passwordParts = rs.getString("password").split(":");
         user.setPassword(passwordParts[0]);
 

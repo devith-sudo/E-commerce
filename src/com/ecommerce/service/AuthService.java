@@ -4,7 +4,9 @@ package com.ecommerce.service;
 import com.ecommerce.dao.UserDAO;
 import com.ecommerce.model.User;
 import com.ecommerce.util.PasswordHasher;
+import lombok.Getter;
 
+@Getter
 public class AuthService {
     private final UserDAO userDAO;
     private User currentUser;
@@ -29,7 +31,7 @@ public class AuthService {
             return false;
         }
 
-        // Password is stored as "hashedPassword:salt"
+        // The Password is stored as "hashedPassword:salt"
         String[] passwordParts = user.getPassword().split(":");
         String storedHash = passwordParts[0];
         String salt = passwordParts[1];
@@ -43,10 +45,6 @@ public class AuthService {
 
     public void logout() {
         currentUser = null;
-    }
-
-    public User getCurrentUser() {
-        return currentUser;
     }
 
     public boolean isAdmin() {
