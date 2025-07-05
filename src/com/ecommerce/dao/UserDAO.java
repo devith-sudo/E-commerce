@@ -3,7 +3,6 @@ package com.ecommerce.dao;
 
 import com.ecommerce.config.DatabaseConfig;
 import com.ecommerce.model.User;
-import com.ecommerce.util.PasswordHasher;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,18 +10,16 @@ import java.util.List;
 import java.util.UUID;
 
 public class UserDAO {
+
     public User createUser(User user) {
         String sql = "INSERT INTO ecommerce.users (user_name, email, password, role, u_uuid) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            String salt = PasswordHasher.generateSalt();
-            String hashedPassword = PasswordHasher.hashPassword(user.getPassword(), salt);
-
             stmt.setString(1, user.getUserName());
             stmt.setString(2, user.getEmail());
-            stmt.setString(3, hashedPassword + ":" + salt);
+            stmt.setString(3, user.getPassword());  // hashed:salt format
             stmt.setString(4, user.getRole());
             stmt.setString(5, UUID.randomUUID().toString());
 
@@ -47,7 +44,15 @@ public class UserDAO {
     }
 
     public User getUserByUsername(String username) {
-        String sql = "SELECT * FROM ecommerce.users WHERE user_name = ? AND is_deleted = FALSE";
+        String sql = "SELECT * FROM ecommerce.users WHERE user_name = ? AND (is_deleted = FALSE OR is_deleted IS NULL)";
+
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be null or empty");
+        }
+
+        username = username.trim();
+
+        // Prevent SQL injection by using prepared statements
 
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -100,11 +105,7 @@ public class UserDAO {
         user.setId(rs.getInt("id"));
         user.setUserName(rs.getString("user_name"));
         user.setEmail(rs.getString("email"));
-
-        // The Password is stored as "hashedPassword:salt"
-        String[] passwordParts = rs.getString("password").split(":");
-        user.setPassword(passwordParts[0]);
-
+        user.setPassword(rs.getString("password"));  // hashed:salt
         user.setRole(rs.getString("role"));
         user.setIsDeleted(rs.getBoolean("is_deleted"));
         user.setUUuid(rs.getString("u_uuid"));
