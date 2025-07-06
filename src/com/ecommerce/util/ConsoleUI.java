@@ -24,6 +24,7 @@ public class ConsoleUI {
     private static final String BG_CYAN = "\u001B[46m";
     private static final String BG_WHITE = "\u001B[47m";
 
+
     public static void displayTable(String[] headers, List<Map<String, Object>> data) {
         // Calculate column widths
         int[] widths = new int[headers.length];

@@ -31,4 +31,8 @@ public class ProductService {
     public boolean deleteProduct(int productId) {
         return productDAO.deleteProduct(productId);
     }
+
+    public List<Product> searchProductsByNameOrCategory(String keyword) {
+        return productDAO.searchProductsByNameOrCategory(keyword);
+    }
 }

@@ -20,23 +20,14 @@ public class PasswordHasher {
     public static String hashPassword(String password, String salt) {
         try {
             MessageDigest digest = MessageDigest.getInstance(HASH_ALGORITHM);
-            byte[] passwordBytes = password.getBytes();
-            byte[] saltBytes = Base64.getDecoder().decode(salt);
-
-            // Combine password + salt
-            byte[] combined = new byte[passwordBytes.length + saltBytes.length];
-            System.arraycopy(passwordBytes, 0, combined, 0, passwordBytes.length);
-            System.arraycopy(saltBytes, 0, combined, passwordBytes.length, saltBytes.length);
-
-            // Hash the combined byte array
-            byte[] hashedBytes = digest.digest(combined);
-
+            digest.reset();
+            digest.update(Base64.getDecoder().decode(salt));
+            byte[] hashedBytes = digest.digest(password.getBytes());
             return Base64.getEncoder().encodeToString(hashedBytes);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Hashing algorithm not found", e);
         }
     }
-
 
     public static boolean verifyPassword(String password, String salt, String hashedPassword) {
         String newHashedPassword = hashPassword(password, salt);

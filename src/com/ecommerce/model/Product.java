@@ -15,4 +15,5 @@ public class Product {
     private Integer qty;
     private Boolean isDeleted;
     private String pUuid;
+    private String category;
 }

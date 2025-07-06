@@ -21,50 +21,62 @@ public class ProductController {
         this.authService = authService;
     }
 
+    //Update showProductMenu
     public void showProductMenu() {
         String[] options;
-        if (authService.isAdmin() || authService.isStaff()) {
-            options = new String[]{"View Products", "Add Product", "Update Product", "Delete Product", "Back"};
+        boolean isPrivileged = authService.isAdmin() || authService.isStaff();
+
+        if (isPrivileged) {
+            options = new String[]{
+                    "View Products", "Add Product", "Update Product", "Delete Product", "Search Product", "Back"
+            };
         } else {
-            options = new String[]{"View Products", "Back"};
+            options = new String[]{
+                    "View Products", "Search Product", "Back"
+            };
         }
 
         ConsoleUI.displayMenu("Product Management", options);
-
         int choice = InputValidator.getValidInt("Enter your choice: ");
-        switch (choice) {
-            case 1:
-                viewProducts();
-                break;
-            case 2:
-                if (authService.isAdmin() || authService.isStaff()) {
+
+        if (isPrivileged) {
+            switch (choice) {
+                case 1:
+                    viewProducts();
+                    break;
+                case 2:
                     addProduct();
-                } else {
-                    ConsoleUI.displayMessage("Invalid choice. Please try again.");
-                }
-                break;
-            case 3:
-                if (authService.isAdmin() || authService.isStaff()) {
+                    break;
+                case 3:
                     updateProduct();
-                } else {
-                    ConsoleUI.displayMessage("Invalid choice. Please try again.");
-                }
-                break;
-            case 4:
-                if (authService.isAdmin() || authService.isStaff()) {
+                    break;
+                case 4:
                     deleteProduct();
-                } else {
+                    break;
+                case 5: searchProduct(); break;
+                case 6: return;
+                default:
                     ConsoleUI.displayMessage("Invalid choice. Please try again.");
-                }
-                break;
-            case 5:
-                return;
-            default:
-                ConsoleUI.displayMessage("Invalid choice. Please try again.");
+            }
+        } else {
+            switch (choice) {
+                case 1:
+                    viewProducts();
+                    break;
+                case 2:
+                    searchProduct();
+                    break;
+                case 3: return;
+                default:
+                    ConsoleUI.displayMessage("Invalid choice. Please try again.");
+            }
         }
+
+        // Re-show the menu after any action
         showProductMenu();
     }
 
+    // update this method to show the category
     public void viewProducts() {
         List<Product> products = productService.getAllProducts();
         List<Map<String, Object>> tableData = new ArrayList<>();
@@ -75,11 +87,18 @@ public class ProductController {
             row.put("Name", product.getPName());
             row.put("Price", product.getPrice());
             row.put("Quantity", product.getQty());
+            row.put("Category", product.getCategory()); // <-- Added
             tableData.add(row);
         }
 
-        ConsoleUI.displayTable(new String[]{"ID", "Name", "Price", "Quantity"}, tableData);
+        ConsoleUI.displayTable(
+                new String[]{"ID", "Name", "Price", "Quantity", "Category"},
+                tableData
+        );
     }
+
+
+
 
     private void addProduct() {
         String name = InputValidator.getValidString("Enter product name: ");
@@ -130,4 +149,32 @@ public class ProductController {
             ConsoleUI.displayMessage("Failed to delete product or product not found.");
         }
     }
+
+    //searchProduct method
+    public void searchProduct() {
+        String keyword = InputValidator.getValidString("Enter keyword (name or category): ").toLowerCase();
+        List<Product> products = productService.searchProductsByNameOrCategory(keyword);
+
+        if (products.isEmpty()) {
+            ConsoleUI.displayMessage("No products found for: " + keyword);
+            return;
+        }
+
+        List<Map<String, Object>> tableData = new ArrayList<>();
+        for (Product product : products) {
+            Map<String, Object> row = new HashMap<>();
+            row.put("ID", product.getId());
+            row.put("Name", product.getPName());
+            row.put("Price", product.getPrice());
+            row.put("Quantity", product.getQty());
+            row.put("Category", product.getCategory());
+            tableData.add(row);
+        }
+
+        ConsoleUI.displayTable(
+                new String[]{"ID", "Name", "Price", "Quantity", "Category"},
+                tableData
+        );
+    }
+
 }

@@ -107,6 +107,7 @@ public class ProductDAO {
         }
     }
 
+    //add category column to table
     private Product mapRowToProduct(ResultSet rs) throws SQLException {
         Product product = new Product();
         product.setId(rs.getInt("id"));
@@ -115,6 +116,43 @@ public class ProductDAO {
         product.setQty(rs.getInt("qty"));
         product.setIsDeleted(rs.getBoolean("is_deleted"));
         product.setPUuid(rs.getString("p_uuid"));
+        product.setCategory(rs.getString("category")); // ← this line
         return product;
     }
+
+    public List<Product> searchProductsByNameOrCategory(String keyword) {
+        List<Product> products = new ArrayList<>();
+        String sql = """
+        SELECT p.*, c.name AS category_name
+        FROM products p
+        JOIN categories c ON p.category_id = c.id
+        WHERE p.is_deleted = FALSE
+          AND (LOWER(p.p_name) LIKE ? OR LOWER(c.name) LIKE ?)
+    """;
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String likeKeyword = "%" + keyword.toLowerCase() + "%";
+            stmt.setString(1, likeKeyword);
+            stmt.setString(2, likeKeyword);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    products.add(mapRowToProductWithCategory(rs));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error searching products", e);
+        }
+
+        return products;
+    }
+    private Product mapRowToProductWithCategory(ResultSet rs) throws SQLException {
+        Product product = mapRowToProduct(rs);
+        product.setCategory(rs.getString("category_name"));
+        return product;
+    }
+
 }
