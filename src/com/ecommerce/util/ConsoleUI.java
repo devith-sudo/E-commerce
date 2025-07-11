@@ -1,13 +1,8 @@
-// ConsoleUI.java
-package com.ecommerce.util;
-
-import java.util.List;
-import java.util.Map;
-
-public class ConsoleUI {
+package com.ecommerce.util;import java.util.List;
+import java.util.Map;public class ConsoleUI {
     // ANSI color codes
     private static final String RESET = "\u001B[0m";
-    private static final String BLACK = "\u001B[30m";
+    private static final String BLACK = "\u001B[30m"; // Text color set to black
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
@@ -22,10 +17,7 @@ public class ConsoleUI {
     private static final String BG_BLUE = "\u001B[44m";
     private static final String BG_PURPLE = "\u001B[45m";
     private static final String BG_CYAN = "\u001B[46m";
-    private static final String BG_WHITE = "\u001B[47m";
-
-
-    public static void displayTable(String[] headers, List<Map<String, Object>> data) {
+    private static final String BG_WHITE = "\u001B[47m";public static void displayTable(String[] headers, List<Map<String, Object>> data) {
         // Calculate column widths
         int[] widths = new int[headers.length];
         for (int i = 0; i < headers.length; i++) {
@@ -38,12 +30,12 @@ public class ConsoleUI {
             }
         }
 
-        // Print colored header
-        printColoredSeparator(widths, BG_BLUE, WHITE);
-        printColoredRow(headers, widths, BG_BLUE, WHITE);
-        printColoredSeparator(widths, BG_BLUE, WHITE);
+        // Print colored header with black text
+        printColoredSeparator(widths, BG_BLUE, BLACK);
+        printColoredRow(headers, widths, BG_BLUE, BLACK);
+        printColoredSeparator(widths, BG_BLUE, BLACK);
 
-        // Print data with alternating colors
+        // Print data with alternating colors and black text
         boolean alternate = false;
         for (Map<String, Object> row : data) {
             Object[] values = new Object[headers.length];
@@ -54,11 +46,11 @@ public class ConsoleUI {
             printColoredRow(values, widths, bgColor, BLACK);
             alternate = !alternate;
         }
-        printColoredSeparator(widths, BG_BLUE, WHITE);
+        printColoredSeparator(widths, BG_BLUE, BLACK);
     }
 
     public static void displayMenu(String title, String[] options) {
-        // Colored menu box
+        // Colored menu box with black text
         int width = title.length() + 4;
         for (String option : options) {
             width = Math.max(width, option.length() + 4);
@@ -88,26 +80,34 @@ public class ConsoleUI {
     }
 
     private static void printColoredRow(Object[] values, int[] widths, String bgColor, String textColor) {
-        StringBuilder sb = new StringBuilder(bgColor + textColor + "│" + RESET);
+        StringBuilder sb = new StringBuilder();
+        sb.append(bgColor).append(textColor).append("│");
+
         for (int i = 0; i < values.length; i++) {
-            sb.append(bgColor + textColor + " ").append(String.format("%-" + widths[i] + "s",
-                            values[i] != null ? values[i].toString() : ""))
-                    .append(" " + RESET + bgColor + textColor + "│" + RESET);
+            sb.append(" ")
+                    .append(String.format("%-" + widths[i] + "s", values[i] != null ? values[i].toString() : ""))
+                    .append(" │");
         }
+
+        sb.append(RESET);
         System.out.println(sb.toString());
     }
 
     private static void printColoredSeparator(int[] widths, String bgColor, String textColor) {
-        StringBuilder sb = new StringBuilder(bgColor + textColor + "├" + RESET);
-        for (int width : widths) {
-            sb.append(bgColor + textColor + "─".repeat(width + 2) + "┼" + RESET);
+        StringBuilder sb = new StringBuilder();
+        sb.append(bgColor).append(textColor).append("├");
+        for (int i = 0; i < widths.length; i++) {
+            sb.append("─".repeat(widths[i] + 2));
+            if (i < widths.length - 1) {
+                sb.append("┼");
+            }
         }
-        sb.setCharAt(sb.length() - 3, '┤'); // Replace last ┼ with ┤
+        sb.append("┤").append(RESET);
         System.out.println(sb.toString());
     }
 
     private static String centerText(String text, int width) {
         int padding = (width - text.length()) / 2;
         return " ".repeat(padding) + text + " ".repeat(width - text.length() - padding);
-    }
-}
+    }}
+
