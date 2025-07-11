@@ -12,14 +12,12 @@ public class OrderDAO {
 
     public Order createOrder(Order order) {
         String sql = "INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, ?)";
-
         try (Connection conn = DatabaseConfig.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, order.getUserId());
             stmt.setDouble(2, order.getTotalAmount());
             stmt.setString(3, order.getStatus());
-
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows == 0) {
@@ -34,10 +32,8 @@ public class OrderDAO {
                 }
             }
 
-            // Insert order products
             insertOrderProducts(conn, order);
-
-            return order;
+            return order; // Return the order with the new id
         } catch (SQLException e) {
             throw new RuntimeException("Error creating order", e);
         }
@@ -99,10 +95,27 @@ public class OrderDAO {
         return orders;
     }
 
-    // Remove this duplicate method (already defined above)
-    // private List<OrderProduct> getOrderProducts(Connection conn, int orderId) throws SQLException {
-    //     ...
-    // }
+    // New method to get an order by ID
+    public Order getOrderById(int orderId) {
+        String sql = "SELECT * FROM orders WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, orderId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Order order = mapRowToOrder(rs);
+                    order.setOrderProducts(getOrderProducts(conn, order.getId()));
+                    return order;
+                }
+                return null; // Order not found
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting order by ID", e);
+        }
+    }
 
     private Order mapRowToOrder(ResultSet rs) throws SQLException {
         Order order = new Order();
@@ -114,7 +127,6 @@ public class OrderDAO {
         return order;
     }
 
-    // This is the correct method, you only need it once
     private List<OrderProduct> getOrderProducts(Connection conn, int orderId) throws SQLException {
         List<OrderProduct> orderProducts = new ArrayList<>();
         String sql = "SELECT * FROM order_products WHERE order_id = ?";
@@ -134,5 +146,34 @@ public class OrderDAO {
             }
         }
         return orderProducts;
+    }
+
+    public void updateOrder(Order order) {
+        String sql = "UPDATE orders SET total_amount = ?, status = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setDouble(1, order.getTotalAmount());
+            stmt.setString(2, order.getStatus());
+            stmt.setInt(3, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Updating order failed, no rows affected.");
+            }
+
+            // Delete existing order products and insert new ones
+            String deleteSql = "DELETE FROM order_products WHERE order_id = ?";
+            try (PreparedStatement deleteStmt = conn.prepareStatement(deleteSql)) {
+                deleteStmt.setInt(1, order.getId());
+                deleteStmt.executeUpdate();
+            }
+
+            insertOrderProducts(conn, order);
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating order", e);
+        }
     }
 }

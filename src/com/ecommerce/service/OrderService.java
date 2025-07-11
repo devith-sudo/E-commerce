@@ -1,4 +1,3 @@
-// OrderService.java
 package com.ecommerce.service;
 
 import com.ecommerce.dao.OrderDAO;
@@ -18,7 +17,6 @@ public class OrderService {
     }
 
     public Order createOrder(Order order) {
-        // Validate product quantities before creating order
         for (OrderProduct item : order.getOrderProducts()) {
             Product product = productDAO.getProductById(item.getProductId());
             if (product == null || product.getQty() < item.getQuantity()) {
@@ -26,7 +24,6 @@ public class OrderService {
             }
         }
 
-        // Update product quantities
         for (OrderProduct item : order.getOrderProducts()) {
             Product product = productDAO.getProductById(item.getProductId());
             product.setQty(product.getQty() - item.getQuantity());
@@ -42,5 +39,21 @@ public class OrderService {
 
     public List<Order> getAllOrders() {
         return orderDAO.getAllOrders();
+    }
+
+    public Order getOrderById(int orderId) {
+        return orderDAO.getOrderById(orderId);
+    }
+
+    public void updateOrder(Order order) {
+        // Update product quantities
+        for (OrderProduct item : order.getOrderProducts()) {
+            Product product = productDAO.getProductById(item.getProductId());
+            if (product != null) {
+                product.setQty(product.getQty() - item.getQuantity());
+                productDAO.updateProduct(product);
+            }
+        }
+        orderDAO.updateOrder(order);
     }
 }
